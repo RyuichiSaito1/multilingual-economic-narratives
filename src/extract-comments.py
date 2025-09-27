@@ -20,12 +20,12 @@ def preprocess_text(text):
 def filter_records(file_path, search_keywords, tsv_file_path, monthly_counts_file_path):
     
     # ☆ Mod
-    # Updated date range to include end of day
-    start_date = datetime(2012, 1, 1, 0, 0, 0)
+    # Updated date range to include end of day on December 31, 2022
+    start_date = datetime(2016, 1, 1, 0, 0, 0)
     end_date = datetime(2022, 12, 31, 23, 59, 59)
     
     tsv_lines = []
-    headers = ["created_date", "subreddit_id", "id", "author", "parent_id", "body", "score"]  # Added "score" to the headers
+    headers = ["created_date", "subreddit_id", "id", "author", "parent_id", "body", "score"] 
     processed_bodies = set()  # To track processed body text
     
     # Dictionary to count records by month (key: 'YYYY-MM', value: count)
@@ -46,7 +46,7 @@ def filter_records(file_path, search_keywords, tsv_file_path, monthly_counts_fil
                 comment_id = record.get('id', '')
                 author = record.get('author', '')
                 parent_id = record.get('parent_id', '')
-                score = record.get('score', 0) 
+                score = record.get('score', 0)  # Extracting the score field
                 
                 # Preprocess the body text
                 body_text = preprocess_text(record.get('body', ''))
@@ -59,7 +59,7 @@ def filter_records(file_path, search_keywords, tsv_file_path, monthly_counts_fil
                 
                 # Check if any of the search_keywords are in the processed 'body' field
                 if any(keyword in body_text for keyword in search_keywords):
-                    # if start_date <= created_date <= end_date:
+                    if start_date <= created_date <= end_date:
                         # Prepare TSV line with all required fields, including 'score'
                         tsv_line = "\t".join([
                             created_date.isoformat(),
@@ -104,17 +104,29 @@ def filter_records(file_path, search_keywords, tsv_file_path, monthly_counts_fil
     return len(tsv_lines)  # Return the number of filtered records
 
 # ☆ Mod
-file_path = '/Users/ryuichi/My Drive/03 University/04_Ph.D._Tsukuba/Research/03 Multilingual Analysis/data/json/greece_comments.json'  # Replace with the path to your JSON file
-# search_keywords = ['price', 'cost', 'inflation', 'deflation', 'expensive', 'cheap', 'purchase', 'sale', 'increasing', 'decreasing', 'rising', 'falling', 'affordable', 'unaffordable'] 
-# search_keywords = ['price', 'cost', 'inflation', 'deflation', 'expensive', 'cheap', 'purchase', 'sale','increasing', 'decreasing', 'rising', 'falling', 'affordable', 'unaffordable','overpriced','underpriced', 'valuable', 'worthless', 'bargain', 'discount','markup', 'savings', 'spending', 'budget', 'wages', 'salary', 'profits', 'losses'] 
+file_path = '/Users/ryuichi/Downloads/greece_comments.json'
+# search_keywords = ['price', 'cost', 'inflation', 'deflation', 'expensive', 'cheap', 'purchase', 'sale', 'increasing', 'decreasing', 'rising', 'falling', 'affordable', 'unaffordable']
+
 # Greek
-# search_keywords = ['τιμή', 'κόστος', 'πληθωρισμός', 'αποπληθωρισμός', 'ακριβός', 'φθηνός', 'αγορά', 'πώληση', 'αυξάνεται', 'μειώνεται', 'αυξάνεται', 'μειώνεται', 'προσιτός', 'μη προσιτός', 'υπερτιμημένος', 'υποτιμημένος', 'πολύτιμος', 'άνευ αξίας', 'ευκαιρία', 'έκπτωση', 'περιθώριο κέρδους', 'εξοικονομήσεις', 'δαπάνες', 'προϋπολογισμός', 'μισθοί', 'μισθός', 'κέρδη', 'ζημίες']
+# 'price', 'cost', 'fee', 'charge', 'rate', 'fare', 'outlay', 'cheap', 'affordable', 'inexpensive', 'reasonable', 'economical', 'expensive', 'exorbitant', 'unreasonable', 'uneconomical', 'extravagant'
+# search_keywords = ['τιμή', 'κόστος', 'τέλος', 'χρέωση', 'τιμή', 'κόστος', 'κόστος', 'έξοδα', 'φθηνός', 'προσιτός', 'φθηνός', 'λογικός', 'οικονομικός', 'ακριβός', 'υπερβολικός', 'παράλογος', 'αντιοικονομικός', 'υπερβολικός']
+search_keywords = ['τιμή', 'κόστος', 'τέλος', 'χρέωση', 'ποσοστό', 'κόμιστρο', 'επιπλέον χρέωση', 'έξοδα', 'λογαριασμός']
+# 'price', 'cost', 'fee', 'charge', 'rate', 'fare', 'outlay', 'surcharge', 'expenses', 'bill',  'cheap', 'affordable', 'inexpensive', 'reasonable', 'economical', 'expensive', 'exorbitant', 'unreasonable', 'uneconomical', 'extravagant'
+search_keywords = ['τιμή', 'κόστος', 'τέλος', 'χρέωση', 'τιμή', 'κόστος', 'δαπάνες', 'επιπλέον χρέωση', 'έξοδα', 'λογαριασμός', 'φθηνός', 'προσιτός', 'φθηνός', 'λογικός', 'οικονομικός', 'ακριβός', 'υπέρογκος', 'παράλογος', 'αντιοικονομικός', 'υπερβολικός']
+# 'price', 'cost', 'inflation', 'deflation', 'expensive', 'cheap', 'buy', 'bought', 'sell', 'sold'
+# search_keywords = ['τιμή', 'κόστος', 'πληθωρισμός', 'αποπληθωρισμός', 'ακριβός', 'φθηνός', 'αγορά', 'αγόρασα', 'πώλησα', 'πουλήσα']
+# 'expensive', 'rising', 'increase', 'hike', 'cost', 'prices', 'wage', 'shortage', 'scarcity', 'cheap', 'falling', 'discount', 'sale', 'deal', 'recession', 'unemployment', 'layoffs', 'slowing'
+search_keywords = ['ακριβό', 'αύξηση', 'αύξηση', 'κόστος', 'τιμές', 'μισθός', 'έλλειψη', 'σπανιότητα', 'φθηνό', 'μείωση', 'έκπτωση', 'πώληση', 'συμφωνία', 'ύφεση', 'ανεργία', 'απολύσεις', 'επιβράδυνση']
+# 'price', 'cost', 'inflation', 'deflation', 'expensive', 'cheap', 'buy', 'bought', 'purchase', 'sell', 'sold', 'sale'
+search_keywords = ['τιμή', 'κόστος', 'πληθωρισμός', 'αποπληθωρισμός', 'ακριβός', 'φθηνός', 'αγορά', 'αγόρασα', 'αγορά', 'πώληση', 'πουλήθηκε', 'πώληση']
+
 # Hungarian
-search_keywords = ['ár', 'költség', 'infláció', 'defláció', 'drága', 'olcsó', 'vásárlás', 'akció', 'növekvő', 'csökkenő', 'emelkedő', 'csökkenő', 'megfizethető', 'megfizethetetlen', 'túlárazott', 'alulárazott', 'értékes', 'értéktelen', 'alku', 'kedvezmény', 'felár', 'megtakarítás', 'kiadás', 'költségvetés', 'bérek', 'fizetés', 'nyereség', 'veszteség'] 
+# search_keywords = ['ár', 'költség', 'infláció', 'defláció', 'drága', 'olcsó', 'vásárlás', 'akció', 'növekvő', 'csökkenő', 'emelkedő', 'csökkenő', 'megfizethető', 'megfizethetetlen', 'túlárazott', 'alulárazott', 'értékes', 'értéktelen', 'alku', 'kedvezmény', 'felár', 'megtakarítás', 'kiadás', 'költségvetés', 'bérek', 'fizetés', 'nyereség', 'veszteség']
+
 # ☆ Mod
-tsv_file_path = '/Users/ryuichi/My Drive/03 University/04_Ph.D._Tsukuba/Research/03 Multilingual Analysis/data/tsv/greece_comments.tsv'  # Output TSV file path
+tsv_file_path = '/Users/ryuichi/My Drive/03 University/04_Ph.D._Tsukuba/Research/03 Multilingual Study/data/tsv/greece_comments_2.tsv'  # Output TSV file path
 # ☆ Mod
-monthly_counts_file_path = '/Users/ryuichi/My Drive/03 University/04_Ph.D._Tsukuba/Research/03 Multilingual Analysis/data/monthly_count/greece_comments_count.txt'  # Monthly counts file path
+monthly_counts_file_path = '/Users/ryuichi/My Drive/03 University/04_Ph.D._Tsukuba/Research/03 Multilingual Study/data/monthly_count/greece_comments_count_2.txt'  # Monthly counts file path
 
 filtered_count = filter_records(file_path, search_keywords, tsv_file_path, monthly_counts_file_path)
 
